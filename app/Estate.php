@@ -39,4 +39,9 @@ use Illuminate\Database\Eloquent\Model;
 class Estate extends Model
 {
     protected $primaryKey = "id";
+
+    public function seller()
+    {
+        return $this->belongsTo(Seller::class, "user_id", "user_id");
+    }
 }

@@ -21,4 +21,11 @@ class Seller extends Model
 {
     protected $primaryKey = "user_id";
     public $timestamps = false;
+
+    public $hidden = ['verified', 'verified_by_agent_id'];
+
+    public function user()
+    {
+        return $this->belongsTo(\App\User::class,"user_id");
+    }
 }

@@ -55,14 +55,14 @@ class DatabaseSeeder extends Seeder
             $instance = new \App\Agent;
             $instance->user_id = $agent->id;
             $instance->title = $faker->company;
-            $instance->fee = $faker->randomDigit(5) / 2;
+            $instance->fee = $faker->numberBetween(10000, 200000) / 100;
             $instance->description = $faker->paragraph;
             $instance->save();
         }
 
         $this->command->comment("Seeding seller");
 
-        $is_verified = 1 - intval($faker->numberBetween(0, 6) / 5);
+        $is_verified = 1 - intval($faker->numberBetween(0, 7) / 5);
 
         foreach ($sellers as $seller) {
             /** @var \App\Seller $instance */
@@ -70,7 +70,7 @@ class DatabaseSeeder extends Seeder
             $instance->user_id = $seller->id;
             $instance->verified = $is_verified;
             $instance->verified_by_agent_id = $is_verified ? App\Helper\Util::randomArrayMember($agents)->id : null;
-            $instance->id_card_num = $faker->randomDigit(20);
+            $instance->id_card_num = strval($faker->randomNumber(8)) . strval($faker->randomNumber(8));
             $instance->save();
         }
 
@@ -79,7 +79,7 @@ class DatabaseSeeder extends Seeder
         factory(\App\Estate::class, 500)->create();
 
         $this->command->comment("Mocking estate_agent relations");
-        $estates_id = \App\Estate::pluck("id");
+        $estates_id = \App\Estate::where('verified', 1)->pluck("id");
         $agents_array = $agents->toArray();
         foreach ($estates_id as $estate_id) {
             shuffle($agents_array);

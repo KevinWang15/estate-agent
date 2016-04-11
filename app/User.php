@@ -29,5 +29,5 @@ use Illuminate\Database\Eloquent\Model;
  */
 class User extends Model
 {
-    //
+    public $hidden = ['api_token', 'password', 'created_at', 'updated_at'];
 }

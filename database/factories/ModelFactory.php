@@ -35,14 +35,14 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
 
 $factory->define(App\Estate::class, function (Faker\Generator $faker) {
 
-    fakerData::$faker_sellers_list = \App\Seller::all();
+    fakerData::$faker_sellers_list = \App\Seller::where('verified', 1)->get();
     fakerData::$faker_agents_list = \App\Agent::all();
 
     $city = Util::randomArrayMember(fakerData::$faker_cities);
     $district = Util::randomArrayMember(fakerData::$faker_districts[$city]);
     $zone = "Zone " . $faker->numberBetween(1, 3);
     $neighbourhood = "Neighborhood " . $faker->numberBetween(1, 3);
-    $is_verified = 1 - intval($faker->numberBetween(0, 6) / 5);
+    $is_verified = 1 - intval($faker->numberBetween(0, 7) / 5);
     $is_for_rent = $faker->numberBetween(0, 1);
     return [
         'user_id' => Util::randomArrayMember(fakerData::$faker_sellers_list)->user_id,
