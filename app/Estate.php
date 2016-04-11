@@ -40,8 +40,15 @@ class Estate extends Model
 {
     protected $primaryKey = "id";
 
+    public $hidden = ['verified', 'verified_by_agent_id'];
+
     public function seller()
     {
         return $this->belongsTo(Seller::class, "user_id", "user_id");
+    }
+
+    public function agents()
+    {
+        return $this->belongsToMany(Agent::class, 'agent_estate', "estate_id", "agent_id");
     }
 }

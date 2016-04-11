@@ -26,6 +26,11 @@ class Seller extends Model
 
     public function user()
     {
-        return $this->belongsTo(\App\User::class,"user_id");
+        return $this->belongsTo(\App\User::class, "user_id");
+    }
+
+    public function estates()
+    {
+        return $this->hasMany(Estate::class, "user_id", "user_id");
     }
 }

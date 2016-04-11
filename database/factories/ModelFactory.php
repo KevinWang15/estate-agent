@@ -1,6 +1,6 @@
 <?php
 
-use App\Helper\Util;
+use App\Helpers\Util;
 
 class fakerData
 {
@@ -54,7 +54,7 @@ $factory->define(App\Estate::class, function (Faker\Generator $faker) {
         'condition' => Util::randomArrayMember(fakerData::$faker_conditions),
         'description' => $faker->paragraph,
         'verified' => $is_verified,
-        'verified_by_agent_id' => $is_verified ? App\Helper\Util::randomArrayMember(fakerData::$faker_agents_list)->user_id : null,
+        'verified_by_agent_id' => $is_verified ? App\Helpers\Util::randomArrayMember(fakerData::$faker_agents_list)->user_id : null,
         'is_for_rent' => $is_for_rent,
         'price' => ($is_for_rent ? 1 : 200) * $faker->numberBetween(1000, 8000),
         'is_hidden' => 0,

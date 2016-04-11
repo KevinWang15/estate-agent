@@ -16,7 +16,6 @@ trait UserAPI
 
         APIUtilProvider::validateParams([
             'mobile' => 'required|size:11',
-            'verificationCode' => 'required',
             'password' => 'required|min:8',
             'name' => 'required',
             'email' => 'required'

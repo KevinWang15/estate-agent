@@ -69,7 +69,7 @@ class DatabaseSeeder extends Seeder
             $instance = new \App\Seller;
             $instance->user_id = $seller->id;
             $instance->verified = $is_verified;
-            $instance->verified_by_agent_id = $is_verified ? App\Helper\Util::randomArrayMember($agents)->id : null;
+            $instance->verified_by_agent_id = $is_verified ? App\Helpers\Util::randomArrayMember($agents)->id : null;
             $instance->id_card_num = strval($faker->randomNumber(8)) . strval($faker->randomNumber(8));
             $instance->save();
         }
@@ -94,10 +94,10 @@ class DatabaseSeeder extends Seeder
         $proposals = [];
         for ($i = 0; $i < 400; $i++) {
             $proposal = new \App\Proposal;
-            $proposal->estate_id = \App\Helper\Util::randomArrayMember($estates_id);
+            $proposal->estate_id = \App\Helpers\Util::randomArrayMember($estates_id);
             $agents_id = \DB::select("select agent_id from agent_estate where estate_id=?", [$proposal->estate_id]);
-            $proposal->agent_id = \App\Helper\Util::randomArrayMember($agents_id)->agent_id;
-            $proposal->buyer_id = \App\Helper\Util::randomArrayMember($buyers)->id;
+            $proposal->agent_id = \App\Helpers\Util::randomArrayMember($agents_id)->agent_id;
+            $proposal->buyer_id = \App\Helpers\Util::randomArrayMember($buyers)->id;
             $proposal->state = $faker->numberBetween(-3, 3);
             $proposal->save();
             $proposals[] = $proposal;
