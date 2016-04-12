@@ -40,7 +40,7 @@ class Estate extends Model
 {
     protected $primaryKey = "id";
 
-    public $hidden = ['verified', 'verified_by_agent_id'];
+    public $hidden = ['verified_by_agent_id'];
 
     public function seller()
     {

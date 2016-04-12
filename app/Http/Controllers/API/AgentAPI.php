@@ -29,9 +29,9 @@ trait AgentAPI
             APIResponseBuilder::err(-3, '');
 
         $query = User::leftJoin('sellers', 'sellers.user_id', '=', 'users.id')
-            ->where(['user_type' => 1, 'verified' => 0])->skip((intval(Input::get('page', '1')) - 1) * $pageSize)->take($pageSize);
-
+            ->where(['user_type' => 1, 'verified' => 0]);
         $totalItems = $query->count();
+        $query = $query->orderBy('id', 'desc')->skip((intval(Input::get('page', '1')) - 1) * $pageSize)->take($pageSize);
         $list = $query->get();
 
         APIResponseBuilder::respondWithObject(compact("list", "totalItems"));
@@ -67,10 +67,11 @@ trait AgentAPI
         if ($user->user_type != 2)
             APIResponseBuilder::err(-3, '');
 
-        $query = Estate::with(['seller','seller.user'])->where(['verified' => 0])->skip((intval(Input::get('page', '1')) - 1) * $pageSize)->take($pageSize);
-
+        $query = Estate::with(['seller', 'seller.user'])->where(['verified' => 0, 'is_hidden' => 0]);
         $totalItems = $query->count();
-        $list = $query->get();
+        $query = $query->skip((intval(Input::get('page', '1')) - 1) * $pageSize)->take($pageSize);
+
+        $list = $query->orderBy('id', 'desc')->get();
 
         APIResponseBuilder::respondWithObject(compact("list", "totalItems"));
     }
