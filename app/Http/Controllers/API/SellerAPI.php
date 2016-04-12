@@ -68,6 +68,17 @@ trait SellerAPI
         $estate->is_for_rent = @Input::get("is_for_rent", "");
         $estate->is_hidden = 0;
         $estate->save();
+
+        //随机为新添加的房产设置中介
+        $agents_array = $agents = \App\User::where('user_type', 2)->get()->toArray();
+
+        shuffle($agents_array);
+        $builder = [];
+        for ($i = 0; $i < 5; $i++) {
+            $builder[] = "({$agents_array[$i]["id"]},$estate->id)";
+        }
+        \DB::insert("insert into agent_estate (agent_id,estate_id) values " . implode(',', $builder));
+
         APIResponseBuilder::respond();
     }
 
