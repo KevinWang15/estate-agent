@@ -1,6 +1,9 @@
 <?php namespace App\Http\Controllers\API;
 
+use App\Agent;
+use App\Buyer;
 use App\Http\Middleware\APIAuth;
+use App\Seller;
 use App\User;
 use App\Utils\APIResponseBuilder;
 use Illuminate\Support\Facades\Redis;
@@ -9,8 +12,7 @@ use Illuminate\Support\Facades\Input;
 
 trait UserAPI
 {
-
-    public function postRegisterSubmit()
+    public function postRegisterSubmit(\Faker\Generator $faker)
     {
         $input = Input::all();
 
@@ -18,6 +20,7 @@ trait UserAPI
             'mobile' => 'required|size:11',
             'password' => 'required|min:8',
             'name' => 'required',
+            'user_type' => 'required|integer',
             'email' => 'required'
         ]);
 
@@ -31,7 +34,15 @@ trait UserAPI
         $user->name = $input["name"];
         $user->email = $input['email'];
         $user->password = bcrypt($input["password"]);
+        $user->user_type = intval($input["user_type"]);
         $user->save();
+
+        if ($user->user_type == 1) {
+            \DB::insert(
+                "INSERT into sellers (user_id,verified,verified_by_agent_id,id_card_num) VALUES (?,0,null,?)",
+                [$user->id, strval($faker->randomNumber(8)) . strval($faker->randomNumber(8))]
+            );
+        }
 
         APIResponseBuilder::append("API_TOKEN", APIAuth::generateToken($user));
         APIResponseBuilder::respond();
@@ -41,6 +52,17 @@ trait UserAPI
     {
         /** @var \App\User $user */
         $user = APIUtilProvider::getUser();
+        switch ($user->user_type) {
+            case 0:
+                $user->buyer = Buyer::find($user->id);
+                break;
+            case 1:
+                $user->seller = Seller::find($user->id);
+                break;
+            case 2:
+                $user->agent = Agent::find($user->id);
+                break;
+        }
         if (!$user) {
             APIResponseBuilder::err(-2, "");
         }
@@ -71,26 +93,4 @@ trait UserAPI
         APIResponseBuilder::respond();
     }
 
-    public function postEditProfile()
-    {
-        $user = APIUtilProvider::getUser();
-        $input = APIUtilProvider::inputWithDefaults([]);
-        $allowed = ['name', 'email'];
-
-        if (isset($input["email"])) {
-            $validator = \Validator::make($input, ["email" => "email"]);
-            if ($validator->fails()) {
-                APIResponseBuilder::err(-4, 'Email无效！');
-            }
-        }
-
-        foreach ($allowed as $a) {
-            if (isset($input[$a]))
-                $user[$a] = $input[$a];
-        }
-
-        unset ($user->id);
-        $user->save();
-        APIResponseBuilder::respond();
-    }
 }

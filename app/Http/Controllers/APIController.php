@@ -7,6 +7,7 @@ class APIController extends Controller
 {
     use API\UserAPI;
     use API\ContentAPI;
+    use API\AgentAPI;
 
     public function __construct()
     {

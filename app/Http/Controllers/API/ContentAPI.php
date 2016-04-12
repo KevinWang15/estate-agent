@@ -2,6 +2,7 @@
 
 use App\Agent;
 use App\Estate;
+use App\Proposal;
 use App\Providers\APIUtilProvider;
 use App\Seller;
 use App\Utils\APIResponseBuilder;
@@ -122,5 +123,29 @@ trait ContentAPI
         $list = $builder->get($gets);
 
         APIResponseBuilder::respondWithObject(['totalItems' => $totalItems, 'list' => $list]);
+    }
+
+    public function postMyProposals()
+    {
+        $user = APIUtilProvider::getUser();
+
+        $list = Proposal::leftJoin("estates", 'estates.id', '=', 'proposals.estate_id');
+        if ($user->user_type == 0) {
+            //购买者
+            $list = $list->where('proposals.buyer_id', $user->id);
+        } else if ($user->user_type == 1) {
+            //提供者
+            $list = $list->where('estates.user_id', $user->id);
+        } else if ($user->user_type == 2) {
+            //中介
+            $list = $list->where('proposals.agent_id', $user->id);
+        }
+        
+        APIResponseBuilder::respondWithObject([]);
+    }
+
+    public function postMyOrders()
+    {
+        APIResponseBuilder::respondWithObject([]);
     }
 }

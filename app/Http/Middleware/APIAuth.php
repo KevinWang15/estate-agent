@@ -10,9 +10,11 @@ class APIAuth
 {
     public static function generateToken(User $user)
     {
-        $user->API_TOKEN = str_random(64);
-        $user->save();
-        return $user->API_TOKEN;
+        if (empty($user->api_token)) {
+            $user->api_token = str_random(64);
+            $user->save();
+        }
+        return $user->api_token;
     }
 
     /**

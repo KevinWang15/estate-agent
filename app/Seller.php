@@ -22,7 +22,7 @@ class Seller extends Model
     protected $primaryKey = "user_id";
     public $timestamps = false;
 
-    public $hidden = ['verified', 'verified_by_agent_id'];
+    public $hidden = ['verified_by_agent_id'];
 
     public function user()
     {
