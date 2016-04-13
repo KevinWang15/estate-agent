@@ -13,6 +13,7 @@ use App\Estate;
 use App\Order;
 use App\Proposal;
 use App\Providers\APIUtilProvider;
+use App\Seller;
 use App\Utils\APIResponseBuilder;
 use Illuminate\Support\Facades\Input;
 
@@ -80,6 +81,10 @@ trait SellerAPI
         $user = APIUtilProvider::getUser();
         if ($user->user_type != 1)
             APIResponseBuilder::err(-3, '');
+        $seller = Seller::find($user->id);
+        if (!$seller || !$seller->verified)
+            APIResponseBuilder::err(-4, '未通过资质认证的发布者暂时不能发布房产，请先联系中介进行认证');
+
         $id = intval(@Input::get("id", 0));
         if ($id == 0) {
             $estate = new Estate();
