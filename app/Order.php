@@ -27,5 +27,24 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Order extends Model
 {
-    //
+
+    public function estate()
+    {
+        return $this->belongsTo(Estate::class);
+    }
+
+    public function proposal()
+    {
+        return $this->belongsTo(Proposal::class);
+    }
+
+    public function seller()
+    {
+        return $this->belongsTo(Seller::class);
+    }
+
+    public function buyer()
+    {
+        return $this->belongsTo(Buyer::class);
+    }
 }

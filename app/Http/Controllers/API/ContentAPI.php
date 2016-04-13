@@ -21,9 +21,12 @@ trait ContentAPI
     {
         APIUtilProvider::validateParams(["id" => "required|integer"]);
         $id = intval(Input::get("id"));
-        $estate = Estate::where(['is_hidden' => 0, 'verified' => 1, "id" => $id])->first();
+        $estate = Estate::where(['verified' => 1, "id" => $id])->first();
         if ($estate == null)
             APIResponseBuilder::err(-4, '');
+
+        if ($estate->is_hidden)
+            APIResponseBuilder::err(-5, '现在不能查看本房产的信息，很可能已经被人买走了哦');
 
 //        $agents = Agent::whereIn("user_id",
 //            array_pluck(\DB::select("select agent_id from agent_estate where estate_id=?", [$estate->id]),
@@ -140,7 +143,7 @@ trait ContentAPI
             //中介
             $list = $list->where('proposals.agent_id', $user->id);
         }
-        
+
         APIResponseBuilder::respondWithObject([]);
     }
 

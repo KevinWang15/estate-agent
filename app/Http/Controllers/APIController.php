@@ -8,15 +8,12 @@ class APIController extends Controller
     use API\UserAPI;
     use API\ContentAPI;
     use API\AgentAPI;
+    use API\BuyerAPI;
     use API\SellerAPI;
 
     public function __construct()
     {
     }
-
-    /**
-     * @return \App\User
-     */
 
     public function getIndex()
     {

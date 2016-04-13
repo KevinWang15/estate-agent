@@ -10,6 +10,8 @@ namespace App\Http\Controllers\API;
 
 
 use App\Estate;
+use App\Order;
+use App\Proposal;
 use App\Providers\APIUtilProvider;
 use App\Utils\APIResponseBuilder;
 use Illuminate\Support\Facades\Input;
@@ -52,9 +54,29 @@ trait SellerAPI
 
     }
 
+    public function postSellerOrdersList()
+    {
+        APIUtilProvider::validateParams([
+            'page' => 'required|integer'
+        ]);
+        $pageSize = 6;
+
+        $user = APIUtilProvider::getUser();
+
+        if ($user->user_type != 1)
+            APIResponseBuilder::err(-3, '');
+
+        $query = Order::leftJoin('proposals', 'proposals.order_id', '=', 'orders.id')->with(['estate', 'buyer', 'buyer.user'])->where(['orders.seller_id' => $user->id]);
+
+        $totalItems = $query->count();
+        $query = $query->skip((intval(Input::get('page', '1')) - 1) * $pageSize)->take($pageSize);
+        $list = $query->orderBy('orders.id', 'desc')->get(['*', 'orders.state as order_state']);
+
+        APIResponseBuilder::respondWithObject(compact("list", "totalItems"));
+    }
+
     public function postEditEstate()
     {
-
         $user = APIUtilProvider::getUser();
         if ($user->user_type != 1)
             APIResponseBuilder::err(-3, '');
@@ -93,6 +115,29 @@ trait SellerAPI
             \DB::insert("insert into agent_estate (agent_id,estate_id) values " . implode(',', $builder));
         }
 
+        APIResponseBuilder::respond();
+    }
+
+    public function postSellerSetOrderState()
+    {
+        APIUtilProvider::validateParams([
+            'id' => 'required|integer',
+            'state' => 'required|integer'
+        ]);
+
+        $user = APIUtilProvider::getUser();
+
+        /** @var Order $order */
+        $order = Order::find(@intval(@Input::get("id", 0)));
+        if ($order == null) APIResponseBuilder::err(-3, "找不到交易单");
+        if (intval($order->seller_id) != intval($user->id)) APIResponseBuilder::err(-4, "不是你的交易单");
+        $state = intval(Input::get("state", 0));
+
+        if ($state <= 0 || $state > 2)
+            APIResponseBuilder::err(-4, "状态无效");
+
+        $order->state = $state;
+        $order->save();
         APIResponseBuilder::respond();
     }
 

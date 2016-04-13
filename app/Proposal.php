@@ -26,5 +26,18 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Proposal extends Model
 {
-    //
+    public function estate()
+    {
+        return $this->belongsTo(Estate::class);
+    }
+
+    public function agent()
+    {
+        return $this->belongsTo(Agent::class);
+    }
+
+    public function buyer()
+    {
+        return $this->belongsTo(Buyer::class);
+    }
 }
