@@ -104,6 +104,10 @@ trait SellerAPI
         $estate->save();
 
         if ($id == 0) {
+
+            $estate->verified = 0;
+            $estate->save();
+
             //随机为新添加的房产设置中介
             $agents_array = $agents = \App\User::where('user_type', 2)->get()->toArray();
 
