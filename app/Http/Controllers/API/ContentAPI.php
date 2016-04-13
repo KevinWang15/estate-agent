@@ -5,6 +5,7 @@ use App\Estate;
 use App\Proposal;
 use App\Providers\APIUtilProvider;
 use App\Seller;
+use App\User;
 use App\Utils\APIResponseBuilder;
 use Illuminate\Support\Facades\Input;
 use stdClass;
@@ -150,5 +151,10 @@ trait ContentAPI
     public function postMyOrders()
     {
         APIResponseBuilder::respondWithObject([]);
+    }
+
+    public function postGetAllTestUsers()
+    {
+        APIResponseBuilder::respondWithObject(['list' => User::all(["mobile", 'user_type', "name"])]);
     }
 }
