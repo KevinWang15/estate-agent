@@ -42,6 +42,11 @@ trait UserAPI
                 "INSERT into sellers (user_id,verified,verified_by_agent_id,id_card_num) VALUES (?,0,null,?)",
                 [$user->id, strval($faker->randomNumber(8)) . strval($faker->randomNumber(8))]
             );
+        } else if ($user->user_type == 0) {
+            \DB::insert(
+                "INSERT into buyers (user_id) VALUES (?)",
+                [$user->id]
+            );
         }
 
         APIResponseBuilder::append("API_TOKEN", APIAuth::generateToken($user));
